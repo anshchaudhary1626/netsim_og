@@ -32,6 +32,8 @@ class EndDevice:
         self.timeout = 2
         self.sender_window = {}
         self.expected_seq = 0
+        # Each separate conversation gets its own expected sequence number.
+        self.receiver_expected_seq = {}
 
         # Application services
         self.services = {
@@ -307,9 +309,15 @@ class EndDevice:
 
         segment = datagram['payload']
         seq = segment['seq_num']
+        flow_key = (
+            datagram['src_ip'],
+            segment['src_port'],
+            segment['dest_port']
+        )
+        expected_seq = self.receiver_expected_seq.get(flow_key, 0)
 
         # Go-Back-N accepts packets only in the expected order.
-        if seq == self.expected_seq:
+        if seq == expected_seq:
             log(
                 "Transport",
                 self.name,
@@ -322,7 +330,8 @@ class EndDevice:
                 f"ACK Sent for SEQ={seq}"
             )
 
-            self.expected_seq += 1
+            self.receiver_expected_seq[flow_key] = expected_seq + 1
+            self.expected_seq = expected_seq + 1
 
             dest_port = segment['dest_port']
 
@@ -350,7 +359,7 @@ class EndDevice:
             log(
                 "Transport",
                 self.name,
-                f"Out-of-order Packet! Expected={self.expected_seq}, Got={seq}"
+                f"Out-of-order Packet! Expected={expected_seq}, Got={seq}"
             )
 
             log(
@@ -362,5 +371,5 @@ class EndDevice:
             log(
                 "Transport",
                 self.name,
-                f"Re-sending ACK for SEQ={self.expected_seq - 1}"
+                f"Re-sending ACK for SEQ={expected_seq - 1}"
             )
