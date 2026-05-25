@@ -1,0 +1,710 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [ 5 0 R 7 0 R 9 0 R 11 0 R 13 0 R ] /Count 5 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 2786 >>
+stream
+BT
+/F1 20 Tf
+72 760 Td
+/F1 20 Tf
+(Computer Networks Protocol Stack Simulator) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(1. Project Agenda) Tj
+0 -16 Td
+/F1 10 Tf
+(This project is a Computer Networks protocol stack simulator. The main goal is to show how) Tj
+0 -16 Td
+/F1 10 Tf
+(data moves from one end device to another through different layers of a network.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The simulator demonstrates Physical, Data Link, Network, Transport, and Application layer) Tj
+0 -16 Td
+/F1 10 Tf
+(concepts using simple Python classes. It is not sending real network traffic. Instead, it) Tj
+0 -16 Td
+/F1 10 Tf
+(prints clear logs to show what would happen in a real network.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The project is designed for learning. Each layer adds its own information to the data while) Tj
+0 -16 Td
+/F1 10 Tf
+(sending, and each layer checks/removes that information while receiving.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(2. Modular File Structure) Tj
+0 -16 Td
+/F1 10 Tf
+(main.py: Entry point of the project. It calls the simulation runner.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(network/simulator.py: Builds all test topologies and starts communication between devices.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(devices/end_device.py: Represents a PC or server. It contains application, transport,) Tj
+0 -16 Td
+/F1 10 Tf
+(network, data link, and receiving-side logic.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(devices/hub.py: Represents a hub. It broadcasts incoming frames to all connected devices.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(devices/switch.py: Represents a switch. It performs MAC learning, flooding, and unicast) Tj
+0 -16 Td
+/F1 10 Tf
+(forwarding.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(devices/router.py: Represents a router. It handles interfaces, routing tables, static) Tj
+0 -16 Td
+/F1 10 Tf
+(routing, RIP using Bellman-Ford, TTL, and packet forwarding.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(models/segment.py: Builds transport layer segments.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(models/packet.py: Builds network layer datagrams.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(models/frame.py: Builds data link layer frames and attaches CRC.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(protocols/checksum.py: Implements CRC-32 error checking.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(protocols/csma_cd.py: Implements CSMA/CD access control simulation.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(protocols/go_back_n.py: Implements Go-Back-N helper logic such as ACK simulation and message) Tj
+0 -16 Td
+/F1 10 Tf
+(chunking.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+/F1 9 Tf
+0 -26 Td
+(Page 1) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 3146 >>
+stream
+BT
+/F1 20 Tf
+72 760 Td
+/F1 10 Tf
+(utils/logger.py: Prints readable layer-by-layer logs and generates fake MAC addresses.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(3. Physical Layer) Tj
+0 -16 Td
+/F1 10 Tf
+(The Physical layer is shown when devices send and receive bits over a medium. In the) Tj
+0 -16 Td
+/F1 10 Tf
+(simulator, this is represented by logs such as 'Sending bits over medium' and 'Bits) Tj
+0 -16 Td
+/F1 10 Tf
+(Received'.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(End devices can be connected directly to each other, to a hub, or to a switch. A hub behaves) Tj
+0 -16 Td
+/F1 10 Tf
+(like a Physical layer device because it does not understand MAC addresses. It simply repeats) Tj
+0 -16 Td
+/F1 10 Tf
+(the signal to all other ports.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Test cases include a dedicated connection between two end devices and a star topology with) Tj
+0 -16 Td
+/F1 10 Tf
+(five end devices connected to one hub.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(4. Data Link Layer) Tj
+0 -16 Td
+/F1 10 Tf
+(The Data Link layer uses MAC addresses to deliver frames inside a local network. Frames are) Tj
+0 -16 Td
+/F1 10 Tf
+(created in models/frame.py and contain source MAC, destination MAC, payload, and CRC.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(CRC-32 is used as the error control protocol. The sender calculates CRC before sending, and) Tj
+0 -16 Td
+/F1 10 Tf
+(the receiver recalculates CRC after receiving. If values do not match, the frame is dropped.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(CSMA/CD is used as the access control protocol. Before sending, the device checks if the) Tj
+0 -16 Td
+/F1 10 Tf
+(channel is free. If a collision is simulated, the device sends a jam signal, waits using) Tj
+0 -16 Td
+/F1 10 Tf
+(backoff, and tries again.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The switch performs MAC learning. When it receives a frame, it learns the source MAC address) Tj
+0 -16 Td
+/F1 10 Tf
+(and remembers which device/port it came from. If the destination MAC is known, it unicasts) Tj
+0 -16 Td
+/F1 10 Tf
+(the frame. If unknown, it floods the frame.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The simulator reports broadcast and collision domains for switch and hub topologies.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(5. Network Layer) Tj
+0 -16 Td
+/F1 10 Tf
+(The Network layer is responsible for IP addressing and routing. End devices store their IP) Tj
+0 -16 Td
+/F1 10 Tf
+(address and subnet. Routers store interfaces and routing tables.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(When an end device sends data, it checks if the destination IP is inside its own subnet. If) Tj
+0 -16 Td
+/F1 10 Tf
+(yes, it sends directly. If no, it sends the frame to the default gateway.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(ARP is simulated using an ARP table. If the target IP is found in the ARP table, the device) Tj
+0 -16 Td
+/F1 10 Tf
+(gets the matching MAC address. If not found, the broadcast MAC address ff:ff:ff:ff:ff:ff is) Tj
+/F1 9 Tf
+0 -26 Td
+(Page 2) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 3043 >>
+stream
+BT
+/F1 20 Tf
+72 760 Td
+/F1 10 Tf
+(used.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Routers use TTL to prevent packets from travelling forever. Every time a router forwards a) Tj
+0 -16 Td
+/F1 10 Tf
+(packet, it decreases TTL by one. If TTL becomes too low, the packet is dropped.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Routing uses longest mask matching. This means the router chooses the most specific matching) Tj
+0 -16 Td
+/F1 10 Tf
+(route for the destination IP address.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(6. Static Routing and RIP) Tj
+0 -16 Td
+/F1 10 Tf
+(Static routing is implemented by manually adding a route to the router routing table. This) Tj
+0 -16 Td
+/F1 10 Tf
+(is useful when the path is known in advance.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(RIP dynamic routing is implemented using the Bellman-Ford distance-vector idea. Routers know) Tj
+0 -16 Td
+/F1 10 Tf
+(their directly connected networks first. Then they exchange route information with RIP) Tj
+0 -16 Td
+/F1 10 Tf
+(neighbors.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(In Bellman-Ford, each router checks whether going through a neighbor gives a lower metric to) Tj
+0 -16 Td
+/F1 10 Tf
+(reach a network. If the new metric is better, the routing table is updated.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(RIP uses hop count as the metric. A metric of 16 is treated as unreachable. In this) Tj
+0 -16 Td
+/F1 10 Tf
+(simulator, the RIP demo uses three routers and shows that a cheaper path through an) Tj
+0 -16 Td
+/F1 10 Tf
+(intermediate router is selected over a more expensive direct path.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(7. Transport Layer) Tj
+0 -16 Td
+/F1 10 Tf
+(The Transport layer is mainly implemented in devices/end_device.py and) Tj
+0 -16 Td
+/F1 10 Tf
+(protocols/go_back_n.py.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The simulator uses port numbers for process-to-process communication. Port 80 is used for) Tj
+0 -16 Td
+/F1 10 Tf
+(HTTP, and port 21 is used for FTP. The sender also generates an ephemeral source port) Tj
+0 -16 Td
+/F1 10 Tf
+(between 49152 and 65535.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Go-Back-N is implemented as the sliding window protocol. Data is split into chunks, each) Tj
+0 -16 Td
+/F1 10 Tf
+(chunk becomes a segment, and each segment gets a sequence number.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The sender keeps sent segments in a sender window. If an ACK is lost, the sender retransmits) Tj
+0 -16 Td
+/F1 10 Tf
+(from the missing sequence number. The receiver accepts packets only in the expected order.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The receiver tracks expected sequence numbers per conversation using source IP, source port,) Tj
+0 -16 Td
+/F1 10 Tf
+(and destination port. This allows a new HTTP or FTP request to start again at sequence) Tj
+0 -16 Td
+/F1 10 Tf
+(number 0 without being treated as an old duplicate.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+/F1 9 Tf
+0 -26 Td
+(Page 3) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 2971 >>
+stream
+BT
+/F1 20 Tf
+72 760 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(8. Application Layer) Tj
+0 -16 Td
+/F1 10 Tf
+(The Application layer is implemented in devices/end_device.py.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Two application services are simulated: HTTP and FTP. HTTP runs on port 80 and returns 'HTTP) Tj
+0 -16 Td
+/F1 10 Tf
+(200 OK'. FTP runs on port 21 and returns 'FTP FILE SENT'.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(When the receiver gets a valid segment, it checks the destination port. If the port is 80,) Tj
+0 -16 Td
+/F1 10 Tf
+(the HTTP handler is called. If the port is 21, the FTP handler is called. If the port is) Tj
+0 -16 Td
+/F1 10 Tf
+(unknown, the simulator logs 'Port unreachable'.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(9. Encapsulation and Decapsulation Flow) Tj
+0 -16 Td
+/F1 10 Tf
+(Sending flow: Application data is given to the Transport layer. Transport creates a segment) Tj
+0 -16 Td
+/F1 10 Tf
+(with ports and sequence number. Network creates a datagram with source and destination IP.) Tj
+0 -16 Td
+/F1 10 Tf
+(Data Link creates a frame with source and destination MAC plus CRC. Physical layer sends the) Tj
+0 -16 Td
+/F1 10 Tf
+(bits.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Receiving flow: The receiver checks the destination MAC, verifies CRC, checks the) Tj
+0 -16 Td
+/F1 10 Tf
+(destination IP, checks sequence number, checks destination port, and finally delivers the) Tj
+0 -16 Td
+/F1 10 Tf
+(payload to HTTP or FTP.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(In simple words, sending wraps the data layer by layer. Receiving unwraps the data layer by) Tj
+0 -16 Td
+/F1 10 Tf
+(layer.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(10. Test Cases Implemented) Tj
+0 -16 Td
+/F1 10 Tf
+(Test Case 1: Two end devices connected directly. This demonstrates basic end-to-end data) Tj
+0 -16 Td
+/F1 10 Tf
+(transmission.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Test Case 2: Five end devices connected to a hub. This demonstrates hub broadcasting and one) Tj
+0 -16 Td
+/F1 10 Tf
+(collision domain.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Test Case 3: Five end devices connected to a switch. This demonstrates MAC learning,) Tj
+0 -16 Td
+/F1 10 Tf
+(flooding, unicast forwarding, CRC, CSMA/CD, and Go-Back-N.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Test Case 4: Two hub-based star topologies connected through one switch. This demonstrates a) Tj
+0 -16 Td
+/F1 10 Tf
+(larger LAN and reports broadcast/collision domains.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Test Case 5: Full stack routing between two subnets using a router. This demonstrates IP) Tj
+0 -16 Td
+/F1 10 Tf
+(addressing, gateway usage, ARP, routing, HTTP, FTP, ports, and complete encapsulation.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(Test Case 6: RIP Bellman-Ford dynamic routing demo with three routers. This demonstrates how) Tj
+/F1 9 Tf
+0 -26 Td
+(Page 4) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 1933 >>
+stream
+BT
+/F1 20 Tf
+72 760 Td
+/F1 10 Tf
+(routers learn better routes dynamically using distance-vector updates.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(11. Current Limitations) Tj
+0 -16 Td
+/F1 10 Tf
+(The simulator is educational and simplified. It does not send real packets on a real) Tj
+0 -16 Td
+/F1 10 Tf
+(network.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(ARP is simulated using table lookup and broadcast fallback. It does not implement a full ARP) Tj
+0 -16 Td
+/F1 10 Tf
+(request/reply exchange.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(ACKs are simulated locally for Go-Back-N instead of travelling back through the entire) Tj
+0 -16 Td
+/F1 10 Tf
+(network path.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(RIP is implemented with Bellman-Ford route convergence, but it does not simulate timed) Tj
+0 -16 Td
+/F1 10 Tf
+(periodic updates like a real router would.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(A bridge device is not currently implemented. The switch covers Layer 2 learning and) Tj
+0 -16 Td
+/F1 10 Tf
+(forwarding behavior.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 14 Tf
+(12. Conclusion) Tj
+0 -16 Td
+/F1 10 Tf
+(This project successfully demonstrates how a network protocol stack works from top to) Tj
+0 -16 Td
+/F1 10 Tf
+(bottom. It shows how data is created by an application, segmented by the Transport layer,) Tj
+0 -16 Td
+/F1 10 Tf
+(addressed by the Network layer, framed by the Data Link layer, and sent through the Physical) Tj
+0 -16 Td
+/F1 10 Tf
+(layer.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+(The simulator also demonstrates important networking concepts such as hubs, switches, MAC) Tj
+0 -16 Td
+/F1 10 Tf
+(learning, CRC, CSMA/CD, Go-Back-N, IPv4 subnets, ARP, static routing, RIP with Bellman-Ford,) Tj
+0 -16 Td
+/F1 10 Tf
+(HTTP, and FTP.) Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+0 -16 Td
+/F1 10 Tf
+() Tj
+/F1 9 Tf
+0 -26 Td
+(Page 5) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 12 0 R >>
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000143 00000 n 
+0000000213 00000 n 
+0000003051 00000 n 
+0000003177 00000 n 
+0000006375 00000 n 
+0000006501 00000 n 
+0000009596 00000 n 
+0000009722 00000 n 
+0000012746 00000 n 
+0000012874 00000 n 
+0000014860 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+14988
+%%EOF

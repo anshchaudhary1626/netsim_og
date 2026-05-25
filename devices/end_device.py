@@ -1,5 +1,7 @@
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import ipaddress
 import random
+from urllib.parse import parse_qs, urlparse
 
 from models.frame import create_frame
 from models.packet import create_datagram
@@ -71,6 +73,72 @@ class EndDevice:
         )
 
         return "FTP FILE SENT"
+
+    def start_application_server(self, host="127.0.0.1", port=8080):
+        """
+        Start a small real HTTP server for browser testing.
+        Browser path /http calls this device's HTTP application handler.
+        """
+        device = self
+
+        class ApplicationRequestHandler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                parsed_url = urlparse(self.path)
+                query = parse_qs(parsed_url.query)
+                payload = query.get("payload", ["BROWSER_TEST_MESSAGE"])[0]
+
+                if parsed_url.path == "/":
+                    self.send_text(
+                        "Application Layer Test Server\n\n"
+                        "Open this URL in your browser:\n"
+                        f"http://{host}:{port}/http?payload=GET_INDEX_HTML_FILE\n"
+                    )
+                    return
+
+                if parsed_url.path == "/http":
+                    response = device.http_handler(payload)
+                    self.send_text(
+                        "HTTP Application Service\n"
+                        f"Device: {device.name}\n"
+                        f"Request payload: {payload}\n"
+                        f"Response: {response}\n"
+                    )
+                    return
+
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"Not found. Try /http.")
+
+            def send_text(self, body):
+                encoded_body = body.encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                self.send_header("Content-Length", str(len(encoded_body)))
+                self.end_headers()
+                self.wfile.write(encoded_body)
+
+            def log_message(self, format, *args):
+                log("Application", device.name, format % args)
+
+        server = HTTPServer((host, port), ApplicationRequestHandler)
+
+        log(
+            "Application",
+            self.name,
+            f"Browser test server running at http://{host}:{port}"
+        )
+        log(
+            "Application",
+            self.name,
+            f"HTTP test URL: http://{host}:{port}/http?payload=GET_INDEX_HTML_FILE"
+        )
+
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            log("Application", self.name, "Browser test server stopped.")
+        finally:
+            server.server_close()
 
     def generate_ephemeral_port(self):
         """Create a temporary source port for this outgoing communication."""
