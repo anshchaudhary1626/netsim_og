@@ -120,9 +120,43 @@ def run_simulation():
     router.configure_interface("eth0", "10.20.30.1", "10.20.30.0/24", sw_a)
     router.configure_interface("eth1", "192.168.100.1", "192.168.100.0/24", sw_b)
 
-    # Add example routing entries to demonstrate static and RIP-style routing.
+    # Add one static route to demonstrate manual routing.
     router.add_static_route("0.0.0.0/0", "10.20.30.254", "eth0")
-    router.add_rip_route("192.168.200.0/24", "192.168.100.2", metric=2)
+
+    # Demonstrate RIP using Bellman-Ford on three routers.
+    print("\n--- RIP Bellman-Ford Dynamic Routing Demo ---")
+    rip_r1 = Router("RIP-R1")
+    rip_r2 = Router("RIP-R2")
+    rip_r3 = Router("RIP-R3")
+
+    rip_sw1 = Switch("RIP-Switch1")
+    rip_sw2 = Switch("RIP-Switch2")
+    rip_sw3 = Switch("RIP-Switch3")
+    rip_link12 = Switch("RIP-Link12")
+    rip_link23 = Switch("RIP-Link23")
+    rip_link13 = Switch("RIP-Link13")
+
+    rip_r1.configure_interface("eth0", "10.50.1.1", "10.50.1.0/24", rip_sw1)
+    rip_r2.configure_interface("eth0", "10.50.2.1", "10.50.2.0/24", rip_sw2)
+    rip_r3.configure_interface("eth0", "10.50.3.1", "10.50.3.0/24", rip_sw3)
+
+    rip_r1.configure_interface("eth1", "172.16.12.1", "172.16.12.0/30", rip_link12)
+    rip_r2.configure_interface("eth1", "172.16.12.2", "172.16.12.0/30", rip_link12)
+    rip_r2.configure_interface("eth2", "172.16.23.1", "172.16.23.0/30", rip_link23)
+    rip_r3.configure_interface("eth1", "172.16.23.2", "172.16.23.0/30", rip_link23)
+    rip_r1.configure_interface("eth2", "172.16.13.1", "172.16.13.0/30", rip_link13)
+    rip_r3.configure_interface("eth2", "172.16.13.2", "172.16.13.0/30", rip_link13)
+
+    # R1 can reach R3 directly with metric 5, but Bellman-Ford should find
+    # the better path R1 -> R2 -> R3 with total metric 2.
+    rip_r1.add_rip_neighbor(rip_r2, "eth1", "172.16.12.2", metric=1)
+    rip_r2.add_rip_neighbor(rip_r1, "eth1", "172.16.12.1", metric=1)
+    rip_r2.add_rip_neighbor(rip_r3, "eth2", "172.16.23.2", metric=1)
+    rip_r3.add_rip_neighbor(rip_r2, "eth1", "172.16.23.1", metric=1)
+    rip_r1.add_rip_neighbor(rip_r3, "eth2", "172.16.13.2", metric=5)
+    rip_r3.add_rip_neighbor(rip_r1, "eth2", "172.16.13.1", metric=5)
+
+    Router.run_rip_bellman_ford([rip_r1, rip_r2, rip_r3])
 
     # Pre-fill tables so the demo focuses on routing instead of extra ARP broadcasts.
     client_pc.arp_table["10.20.30.1"] = router.mac_address
